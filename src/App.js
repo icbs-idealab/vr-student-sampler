@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChakraProvider, Box, VStack, Heading, Textarea, Button, Text, SimpleGrid, Alert, AlertIcon, AlertTitle, AlertDescription } from "@chakra-ui/react";
+import { ChakraProvider, Box, VStack, Heading, Textarea, Button, Text, SimpleGrid, Alert, AlertIcon, AlertTitle, AlertDescription, NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper, FormControl, FormLabel } from "@chakra-ui/react";
 import { Shuffle, Headset } from 'lucide-react';
 
 function App() {
@@ -8,17 +8,22 @@ function App() {
   const [animatingStudents, setAnimatingStudents] = useState([]);
   const [error, setError] = useState('');
   const [isAnimating, setIsAnimating] = useState(false);
+  const [sampleSize, setSampleSize] = useState(40);
 
   const handleInputChange = (event) => {
     setStudentInput(event.target.value);
     setError('');
   };
 
+  const handleSampleSizeChange = (value) => {
+    setSampleSize(Number(value));
+  };
+
   const sampleStudents = () => {
     const students = studentInput.split('\n').map(name => name.trim()).filter(name => name);
 
-    if (students.length < 40) {
-      setError('Not enough participants. Please enter at least 40 student names for the VR experience.');
+    if (students.length < sampleSize) {
+      setError(`Not enough participants. Please enter at least ${sampleSize} student names for the VR experience.`);
       return;
     }
 
@@ -27,7 +32,7 @@ function App() {
     
     setTimeout(() => {
       const shuffled = [...students].sort(() => 0.5 - Math.random());
-      setSampledStudents(shuffled.slice(0, 40));
+      setSampledStudents(shuffled.slice(0, sampleSize));
       setIsAnimating(false);
     }, 3000);
   };
@@ -37,13 +42,13 @@ function App() {
       const interval = setInterval(() => {
         setAnimatingStudents(prevStudents => {
           const shuffled = [...prevStudents].sort(() => 0.5 - Math.random());
-          return shuffled.slice(0, 40);
+          return shuffled.slice(0, sampleSize);
         });
       }, 100);
 
       return () => clearInterval(interval);
     }
-  }, [isAnimating]);
+  }, [isAnimating, sampleSize]);
 
   return (
     <ChakraProvider>
@@ -61,13 +66,28 @@ function App() {
                 onChange={handleInputChange}
                 minHeight="200px"
               />
+              <FormControl>
+                <FormLabel>Number of participants to select:</FormLabel>
+                <NumberInput 
+                  min={1} 
+                  max={100} 
+                  value={sampleSize} 
+                  onChange={handleSampleSizeChange}
+                >
+                  <NumberInputField />
+                  <NumberInputStepper>
+                    <NumberIncrementStepper />
+                    <NumberDecrementStepper />
+                  </NumberInputStepper>
+                </NumberInput>
+              </FormControl>
               <Button 
                 onClick={sampleStudents}
                 isDisabled={!studentInput.trim() || isAnimating}
                 leftIcon={<Box as={Shuffle} className={isAnimating ? 'animate-spin' : ''} />}
                 colorScheme="purple"
               >
-                {isAnimating ? 'Launching VR...' : 'Select 40 VR Participants'}
+                {isAnimating ? 'Launching VR...' : `Select ${sampleSize} VR Participants`}
               </Button>
             </VStack>
           </Box>
