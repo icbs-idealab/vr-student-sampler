@@ -1,0 +1,10 @@
+{
+  "files": {
+    "main.js": "/vr-student-sampler/static/js/main.e5c6011e.js",
+    "index.html": "/vr-student-sampler/index.html",
+    "main.e5c6011e.js.map": "/vr-student-sampler/static/js/main.e5c6011e.js.map"
+  },
+  "entrypoints": [
+    "static/js/main.e5c6011e.js"
+  ]
+}
